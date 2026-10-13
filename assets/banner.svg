@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#090d16" />
+    </linearGradient>
+    <linearGradient id="primary-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="50%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="420" rx="16" fill="url(#bg)" />
+
+  <!-- Subtle Grid Pattern -->
+  <g opacity="0.08" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="70" x2="1200" y2="70" />
+    <line x1="0" y1="140" x2="1200" y2="140" />
+    <line x1="0" y1="210" x2="1200" y2="210" />
+    <line x1="0" y1="280" x2="1200" y2="280" />
+    <line x1="0" y1="350" x2="1200" y2="350" />
+    <line x1="150" y1="0" x2="150" y2="420" />
+    <line x1="300" y1="0" x2="300" y2="420" />
+    <line x1="450" y1="0" x2="450" y2="420" />
+    <line x1="600" y1="0" x2="600" y2="420" />
+    <line x1="750" y1="0" x2="750" y2="420" />
+    <line x1="900" y1="0" x2="900" y2="420" />
+    <line x1="1050" y1="0" x2="1050" y2="420" />
+  </g>
+
+  <!-- Left Accent / Logo Badge -->
+  <g transform="translate(80, 85)" filter="url(#shadow)">
+    <rect width="90" height="90" rx="20" fill="#ef4444" />
+    <path d="M45 22 L68 62 L22 62 Z" fill="#ffffff" opacity="0.9" />
+    <circle cx="45" cy="52" r="7" fill="#ef4444" />
+    <path d="M45 35 L45 44" stroke="#ef4444" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <!-- Text Header -->
+  <g transform="translate(195, 115)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="38" font-weight="800" fill="#ffffff" letter-spacing="-0.5">
+      AnyDesk Reset Utility
+    </text>
+    <text y="35" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="18" fill="#94a3b8" font-weight="500">
+      Multi-Option Service Restart, Cache Cleanup &amp; Auto-Backup Tool for Windows
+    </text>
+  </g>
+
+  <!-- Options Cards -->
+  <!-- Option 1 -->
+  <g transform="translate(80, 215)" filter="url(#shadow)">
+    <rect width="320" height="140" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="18" y="18" width="34" height="34" rx="8" fill="#3b82f6" />
+    <text x="35" y="41" font-family="monospace" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="65" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Safe Reset</text>
+    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Restarts AnyDesk Windows service.</text>
+    <text x="20" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Preserves ID, config, &amp; settings.</text>
+    <rect x="20" y="108" width="90" height="20" rx="4" fill="#10b981" fill-opacity="0.2" />
+    <text x="65" y="122" font-family="monospace" font-size="11" fill="#34d399" font-weight="bold" text-anchor="middle">ZERO DATA LOSS</text>
+  </g>
+
+  <!-- Option 2 -->
+  <g transform="translate(440, 215)" filter="url(#shadow)">
+    <rect width="320" height="140" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="18" y="18" width="34" height="34" rx="8" fill="#f59e0b" />
+    <text x="35" y="41" font-family="monospace" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="65" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Config Folders</text>
+    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Instantly opens ProgramData,</text>
+    <text x="20" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">AppData, &amp; Local folders in Explorer.</text>
+    <rect x="20" y="108" width="80" height="20" rx="4" fill="#f59e0b" fill-opacity="0.2" />
+    <text x="60" y="122" font-family="monospace" font-size="11" fill="#fbbf24" font-weight="bold" text-anchor="middle">QUICK INSPECT</text>
+  </g>
+
+  <!-- Option 3 -->
+  <g transform="translate(800, 215)" filter="url(#shadow)">
+    <rect width="320" height="140" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="18" y="18" width="34" height="34" rx="8" fill="#ef4444" />
+    <text x="35" y="41" font-family="monospace" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="65" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Hard Reset</text>
+    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Automated backup to desktop,</text>
+    <text x="20" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">service stop &amp; temporary cache purge.</text>
+    <rect x="20" y="108" width="95" height="20" rx="4" fill="#ef4444" fill-opacity="0.2" />
+    <text x="67" y="122" font-family="monospace" font-size="11" fill="#f87171" font-weight="bold" text-anchor="middle">AUTO-BACKUP FIRST</text>
+  </g>
+
+  <!-- Bottom Accent Stripe -->
+  <rect x="0" y="414" width="1200" height="6" fill="url(#primary-glow)" />
+</svg>
