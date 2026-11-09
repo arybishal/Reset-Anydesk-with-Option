@@ -1,93 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="100%" height="100%">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0f172a" />
-      <stop offset="50%" stop-color="#1e1b4b" />
-      <stop offset="100%" stop-color="#090d16" />
-    </linearGradient>
-    <linearGradient id="primary-glow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ef4444" />
-      <stop offset="50%" stop-color="#f97316" />
-      <stop offset="100%" stop-color="#3b82f6" />
-    </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45" />
-    </filter>
+    <style>
+      .title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 900; font-size: 54px; fill: #000000; letter-spacing: 2px; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 16px; fill: #000000; letter-spacing: 3px; }
+      .desc { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; fill: #475569; }
+      .card-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 14px; fill: #000000; }
+      .card-desc { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #64748b; }
+      .badge-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 11px; fill: #000000; }
+    </style>
   </defs>
 
-  <rect width="1200" height="420" rx="16" fill="url(#bg)" />
+  <!-- Background Canvas -->
+  <rect width="1200" height="420" fill="#ffffff" stroke="#000000" stroke-width="4"/>
 
-  <!-- Subtle Grid Pattern -->
-  <g opacity="0.08" stroke="#ffffff" stroke-width="1">
-    <line x1="0" y1="70" x2="1200" y2="70" />
-    <line x1="0" y1="140" x2="1200" y2="140" />
-    <line x1="0" y1="210" x2="1200" y2="210" />
-    <line x1="0" y1="280" x2="1200" y2="280" />
-    <line x1="0" y1="350" x2="1200" y2="350" />
-    <line x1="150" y1="0" x2="150" y2="420" />
-    <line x1="300" y1="0" x2="300" y2="420" />
-    <line x1="450" y1="0" x2="450" y2="420" />
-    <line x1="600" y1="0" x2="600" y2="420" />
-    <line x1="750" y1="0" x2="750" y2="420" />
-    <line x1="900" y1="0" x2="900" y2="420" />
-    <line x1="1050" y1="0" x2="1050" y2="420" />
+  <!-- Top Decorative Yellow Accent Bar -->
+  <rect x="0" y="0" width="1200" height="12" fill="#facc15"/>
+
+  <!-- Subtle Grid Pattern Lines -->
+  <line x1="80" y1="40" x2="80" y2="380" stroke="#f1f5f9" stroke-width="2"/>
+  <line x1="1120" y1="40" x2="1120" y2="380" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- Brand Logo Icon Box -->
+  <rect x="80" y="60" width="64" height="64" rx="8" fill="#facc15" stroke="#000000" stroke-width="3"/>
+  <path d="M122 82 v10 h-10 M121 102 a16 16 0 1 1 -1 -14 l10 -10" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Main Headers -->
+  <text x="160" y="96" class="title">ANY RESET</text>
+  <rect x="160" y="112" width="140" height="22" rx="4" fill="#000000"/>
+  <text x="170" y="127" class="badge-text" fill="#ffffff">WINDOWS SOFTWARE</text>
+
+  <rect x="310" y="112" width="70" height="22" rx="4" fill="#fef08a" stroke="#000000" stroke-width="1.5"/>
+  <text x="325" y="127" class="badge-text">v1.0.0</text>
+
+  <text x="80" y="180" class="subtitle">COMPLETE ANYDESK MAINTENANCE &amp; FACTORY RESET UTILITY</text>
+  <text x="80" y="210" class="desc">Engineered for Windows. Clean temporary caches, diagnostic traces, and restore AnyDesk to default with a brand-new ID.</text>
+
+  <!-- Feature Pillar Cards -->
+  <!-- Card 1 -->
+  <g transform="translate(80, 250)">
+    <rect width="240" height="110" rx="8" fill="#f8fafc" stroke="#000000" stroke-width="2"/>
+    <rect x="0" y="0" width="240" height="8" rx="4" fill="#facc15"/>
+    <text x="18" y="42" class="card-title">Cache &amp; Temp Cleaner</text>
+    <text x="18" y="66" class="card-desc">Deep scan for local, roaming,</text>
+    <text x="18" y="84" class="card-desc">and temp session render caches.</text>
   </g>
 
-  <!-- Left Accent / Logo Badge -->
-  <g transform="translate(80, 85)" filter="url(#shadow)">
-    <rect width="90" height="90" rx="20" fill="#ef4444" />
-    <path d="M45 22 L68 62 L22 62 Z" fill="#ffffff" opacity="0.9" />
-    <circle cx="45" cy="52" r="7" fill="#ef4444" />
-    <path d="M45 35 L45 44" stroke="#ef4444" stroke-width="4" stroke-linecap="round" />
+  <!-- Card 2 -->
+  <g transform="translate(345, 250)">
+    <rect width="240" height="110" rx="8" fill="#f8fafc" stroke="#000000" stroke-width="2"/>
+    <rect x="0" y="0" width="240" height="8" rx="4" fill="#facc15"/>
+    <text x="18" y="42" class="card-title">Factory Reset (New ID)</text>
+    <text x="18" y="66" class="card-desc">Wipes identity tokens and</text>
+    <text x="18" y="84" class="card-desc">generates fresh AnyDesk ID.</text>
   </g>
 
-  <!-- Text Header -->
-  <g transform="translate(195, 115)">
-    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="38" font-weight="800" fill="#ffffff" letter-spacing="-0.5">
-      AnyDesk Reset Utility
-    </text>
-    <text y="35" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="18" fill="#94a3b8" font-weight="500">
-      Multi-Option Service Restart, Cache Cleanup &amp; Auto-Backup Tool for Windows
-    </text>
+  <!-- Card 3 -->
+  <g transform="translate(610, 250)">
+    <rect width="240" height="110" rx="8" fill="#f8fafc" stroke="#000000" stroke-width="2"/>
+    <rect x="0" y="0" width="240" height="8" rx="4" fill="#facc15"/>
+    <text x="18" y="42" class="card-title">1-Click Auto Backup</text>
+    <text x="18" y="66" class="card-desc">Automatic pre-clean snapshots</text>
+    <text x="18" y="84" class="card-desc">with instant one-click restore.</text>
   </g>
 
-  <!-- Options Cards -->
-  <!-- Option 1 -->
-  <g transform="translate(80, 215)" filter="url(#shadow)">
-    <rect width="320" height="140" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-    <rect x="18" y="18" width="34" height="34" rx="8" fill="#3b82f6" />
-    <text x="35" y="41" font-family="monospace" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
-    <text x="65" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Safe Reset</text>
-    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Restarts AnyDesk Windows service.</text>
-    <text x="20" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Preserves ID, config, &amp; settings.</text>
-    <rect x="20" y="108" width="90" height="20" rx="4" fill="#10b981" fill-opacity="0.2" />
-    <text x="65" y="122" font-family="monospace" font-size="11" fill="#34d399" font-weight="bold" text-anchor="middle">ZERO DATA LOSS</text>
+  <!-- Card 4 -->
+  <g transform="translate(875, 250)">
+    <rect width="240" height="110" rx="8" fill="#f8fafc" stroke="#000000" stroke-width="2"/>
+    <rect x="0" y="0" width="240" height="8" rx="4" fill="#facc15"/>
+    <text x="18" y="42" class="card-title">GitHub Auto-Updater</text>
+    <text x="18" y="66" class="card-desc">Check and stream download</text>
+    <text x="18" y="84" class="card-desc">releases directly inside the app.</text>
   </g>
-
-  <!-- Option 2 -->
-  <g transform="translate(440, 215)" filter="url(#shadow)">
-    <rect width="320" height="140" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-    <rect x="18" y="18" width="34" height="34" rx="8" fill="#f59e0b" />
-    <text x="35" y="41" font-family="monospace" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
-    <text x="65" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Config Folders</text>
-    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Instantly opens ProgramData,</text>
-    <text x="20" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">AppData, &amp; Local folders in Explorer.</text>
-    <rect x="20" y="108" width="80" height="20" rx="4" fill="#f59e0b" fill-opacity="0.2" />
-    <text x="60" y="122" font-family="monospace" font-size="11" fill="#fbbf24" font-weight="bold" text-anchor="middle">QUICK INSPECT</text>
-  </g>
-
-  <!-- Option 3 -->
-  <g transform="translate(800, 215)" filter="url(#shadow)">
-    <rect width="320" height="140" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-    <rect x="18" y="18" width="34" height="34" rx="8" fill="#ef4444" />
-    <text x="35" y="41" font-family="monospace" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
-    <text x="65" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Hard Reset</text>
-    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">Automated backup to desktop,</text>
-    <text x="20" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#cbd5e1">service stop &amp; temporary cache purge.</text>
-    <rect x="20" y="108" width="95" height="20" rx="4" fill="#ef4444" fill-opacity="0.2" />
-    <text x="67" y="122" font-family="monospace" font-size="11" fill="#f87171" font-weight="bold" text-anchor="middle">AUTO-BACKUP FIRST</text>
-  </g>
-
-  <!-- Bottom Accent Stripe -->
-  <rect x="0" y="414" width="1200" height="6" fill="url(#primary-glow)" />
 </svg>

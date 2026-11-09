@@ -1,102 +1,95 @@
-# Any Reset - AnyDesk Maintenance & Factory Reset Utility
+# Any Reset - AnyDesk Maintenance and Factory Reset Utility
 
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/arybishal/Reset-Anydesk-with-Option)
-[![Software](https://img.shields.io/badge/App-Any%20Reset%20GUI-FACC15?logo=electron&logoColor=black)](https://github.com/arybishal/Reset-Anydesk-with-Option/releases)
-[![Script](https://img.shields.io/badge/Script-Batch%20%2F%20PowerShell-107C41?logo=gnubash&logoColor=white)](reset-anydesk.bat)
+[![Software Release](https://img.shields.io/badge/Release-v1.0.0-FACC15?logo=electron&logoColor=black)](https://github.com/arybishal/Reset-Anydesk-with-Option/releases/latest)
+[![Script](https://img.shields.io/badge/Script-Batch%20CLI-107C41?logo=gnubash&logoColor=white)](reset-anydesk.bat)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 <p align="center">
   <img src="assets/banner.svg" alt="Any Reset Banner" width="100%" />
 </p>
 
-An intelligent Windows utility software to scan, clean, and completely reset AnyDesk to its default factory state with an assigned brand-new AnyDesk ID. Built with a clean White background, stark Black typography, and vibrant Yellow action buttons.
+Any Reset is a dedicated Windows software application designed to inspect, clean, and completely reset AnyDesk installations to their original factory state with an assigned brand-new AnyDesk ID. Engineered with a high-contrast White and Yellow design, automated pre-clean backups, and built-in GitHub update delivery.
 
 ---
 
 ## Direct Download
 
-Grab the ready-to-run Windows standalone executable (no installation required):
+Download the pre-compiled standalone executable. No installation or runtime dependencies required:
 
-[Download Any Reset v1.0.0 Portable (.exe)](https://github.com/arybishal/Reset-Anydesk-with-Option/releases/latest)
+**[Download Any Reset v1.0.0 Portable (.exe)](https://github.com/arybishal/Reset-Anydesk-with-Option/releases/latest/download/Any.Reset-v1.0.0-Portable.exe)**
 
 ---
 
 ## Design System
 
-Any Reset features a modern, clean light aesthetic:
-* White background (#ffffff) with crisp black borders and typography.
-* Vibrant Yellow action buttons (#facc15) with bold black labels.
-* Integrated Windows Titlebar with custom controls and a dedicated Check Update button.
-* Live System Telemetry:
-  - Current AnyDesk ID detection with 1-click clipboard copy.
-  - Windows AnyDesk Service monitor (Running, Stopped, or Not Installed) with toggle.
-  - Process Counter with a 1-click "Kill All" termination button.
-  - Direct "Launch AnyDesk" and "Run as Admin" shortcuts.
+Any Reset is designed with a high-contrast visual layout:
+* Primary Canvas: Clean White background with sharp black borders.
+* Action Controls: High-visibility Electric Yellow buttons with bold black labels.
+* Integrated Windows Titlebar: Native drag region, custom window controls, and an in-app update check shortcut.
+* Real-Time Telemetry Bar:
+  - Current AnyDesk ID detection with one-click clipboard copying.
+  - Windows AnyDesk Service monitor displaying active status with quick toggle.
+  - Process monitor displaying active AnyDesk tasks with a force-terminate shortcut.
+  - Quick action launcher for AnyDesk and an administrative elevation shortcut.
 
 ---
 
-## Features
+## Core Features
 
-### 1. Comprehensive Scanner & Granular Cleaner
-Scans all AnyDesk footprints on your system:
-- Cache & Temp Storage: %LOCALAPPDATA%\AnyDesk\cache, %APPDATA%\AnyDesk\cache, %ProgramData%\AnyDesk\cache, %TEMP%\AnyDesk
-- Thumbnails: Remote connection preview snapshots
-- Traces & Logs: ad.trace, ad_svc.trace, connection_trace.txt
-- User History: Speed dial favorites, address book (user.conf), and text chats (%APPDATA%\AnyDesk\chat)
-- Identity & Registration: system.conf, service.conf
-- Registry Traces: HKCU\Software\AnyDesk
+### 1. Granular Scanner and Cleaner
+Inspects all known storage locations used by AnyDesk across the operating system:
+* Local Session Cache: Directory containing render caches, streaming chunks, and display buffers.
+* Roaming User Cache: Temporary session files stored within the roaming profile.
+* System Service Cache: Service-level caches located in ProgramData.
+* Windows Temp Storage: Runtime executables, unpacked libraries, and clipboard buffers.
+* Remote Desktop Thumbnails: Screenshot previews generated for speed-dial tiles.
+* Diagnostic Trace Logs: Detailed client and service event traces (ad.trace, ad_svc.trace).
+* Connection Logs: Inbound and outbound remote connection records (connection_trace.txt).
+* User Configuration: Stored speed-dial entries, address books, and user settings (user.conf).
+* Session Chat Logs: Saved conversation transcripts exchanged during remote sessions.
+* System Identity Tokens: Hardware fingerprints and configuration files that store the unique client ID (system.conf, service.conf).
+* Windows Registry: Settings and values stored under Current User.
 
-Capabilities:
-* Displays exact item count and human-readable size (KB/MB).
-* Granular checkboxes with instant filter presets: All, Cache & Logs Only (Safe), User History, None.
-* Clean selected items safely with automatic pre-clean backup.
+Scanning displays exact file counts and byte sizes for every item. Users can select items individually or apply presets: All, Cache and Logs Only (Safe), User History, or None.
 
----
+### 2. Complete Factory Reset
+Restores AnyDesk to an out-of-the-box state, equivalent to a clean installation on a new computer:
+1. Automatic Safety Backup: Preserves the existing installation state in a timestamped backup directory.
+2. Process Termination: Stops all active background and foreground AnyDesk tasks.
+3. Service Management: Stops the AnyDesk Windows service.
+4. Identity and Cache Purge: Deletes existing client identifiers, encryption tokens, caches, and session histories.
+5. Registry Clean: Clears user registry references.
+6. Service Re-initialization: Restarts the service. When AnyDesk starts again, it communicates with the network relay to register a brand-new AnyDesk ID.
 
-### 2. Factory Reset (Like Newly Installed)
-Resets AnyDesk completely to an out-of-the-box factory state:
-1. Auto Safety Backup: Complete snapshot saved to C:\Users\<User>\AnyReset-Backups.
-2. Process Termination: Closes all active AnyDesk.exe background and UI tasks.
-3. Service Management: Stops the background Windows service.
-4. Identity & Cache Purge: Clears hardware fingerprints, client UUIDs, authorization tokens, traces, and caches.
-5. Registry Reset: Purges Windows registry settings.
-6. Re-initialization: Starts the service fresh - AnyDesk will generate and register a brand-new AnyDesk ID.
+### 3. Integrated GitHub Auto-Updater
+Any Reset includes an integrated release delivery system:
+* Check for Updates: Query the official GitHub repository releases directly from the titlebar or the utilities panel.
+* Release Notes Display: Inspect new release details, version numbers, and file sizes before downloading.
+* In-App Streaming Download: Downloads updated executables directly with real-time percentage and byte trackers.
+* Instant Launch: Run the newly downloaded release and restart the application with one click.
 
----
+### 4. Backups and One-Click Restore Hub
+* Automatic Snapshots: Full backups of both ProgramData and AppData configurations are created before every cleanup or reset.
+* Snapshot History: View previous backups with creation dates, original AnyDesk IDs, file counts, and total sizes.
+* One-Click Restore: Restore any previously backed-up configuration and recover earlier AnyDesk IDs immediately.
+* Explorer Access: Quick-open button to explore backup archives directly in Windows Explorer.
 
-### 3. GitHub Auto-Update Checker & Downloader
-* Check for updates manually via the titlebar "Check Update" button or the Tools tab.
-* Connects directly to GitHub Releases API.
-* Automatically streams and downloads the latest release binary with real-time progress percentage and byte tracker.
-* 1-click launch of the downloaded update.
-
----
-
-### 4. Backups & 1-Click Restore Hub
-* Automatically saves a timestamped snapshot before every wipe or reset.
-* Lists all saved snapshots with dates, original AnyDesk IDs, file counts, and sizes.
-* 1-Click Restore: Revert to any previous backup at any time.
-* Direct button to explore backup archives in Windows Explorer.
-
----
-
-### 5. Tools & Utilities
-* Safe Reset: Non-destructively restarts the AnyDesk Windows service to resolve frozen incoming connections without losing your ID or settings.
-* Explorer Jump: Quick-open buttons for %ProgramData%, %APPDATA%, %LOCALAPPDATA%, and %TEMP%.
-* Process & Service Controls: Force terminate all processes, start/stop service.
-* CLI Utility: Original reset-anydesk.bat is preserved for terminal/headless usage.
+### 5. Diagnostics and Service Control
+* Safe Reset: Restarts the AnyDesk Windows service without modifying any configuration or resetting the ID. Used to recover frozen incoming sessions.
+* Process Termination: Immediately closes hanging or unresponsive AnyDesk tasks.
+* Directory Navigation: One-click shortcuts to open ProgramData, AppData Roaming, LocalAppData, and Temp storage folders.
+* Command-Line Script: The legacy interactive batch script (reset-anydesk.bat) is maintained in the repository for headless or console environments.
 
 ---
 
-## How to Run
+## Getting Started
 
-### Option A: Portable Standalone Executable (Recommended)
-Download and run:
-```text
-dist\Any Reset-v1.0.0-Portable.exe
-```
+### Method 1: Portable Standalone Executable (Recommended)
+1. Download `Any.Reset-v1.0.0-Portable.exe` from the latest release.
+2. Double-click the file to run. No setup wizard or external runtimes are required.
 
-### Option B: Run from Source / Development
+### Method 2: Running from Source
 ```bash
 # Clone the repository
 git clone https://github.com/arybishal/Reset-Anydesk-with-Option.git
@@ -108,10 +101,26 @@ npm install
 # Start the application
 npm start
 ```
-Or double-click Start-AnyReset.bat.
+Alternatively, double-click `Start-AnyReset.bat` to launch the application.
 
-### Option C: Classic Batch Script (CLI)
-Right-click reset-anydesk.bat and choose "Run as administrator".
+### Method 3: Interactive Command-Line Script
+For environments without a graphical interface:
+1. Right-click `reset-anydesk.bat`.
+2. Select "Run as administrator".
+3. Choose from the numeric menu options.
+
+---
+
+## Technical Specifications
+
+| Property | Details |
+| :--- | :--- |
+| Operating System | Windows 10 / Windows 11 / Windows Server (x64) |
+| Architecture | x86-64 |
+| Application Framework | Electron 45, Node.js |
+| Security Model | asInvoker execution level with optional in-app UAC elevation |
+| Packaging Format | Standalone portable executable (.exe) |
+| External Dependencies | None (All icons, styles, and scripts are bundled natively) |
 
 ---
 
@@ -119,20 +128,19 @@ Right-click reset-anydesk.bat and choose "Run as administrator".
 
 ```text
 Reset-Anydesk-with-Option/
-├── assets/                    # Graphic assets and banners
-│   ├── banner.svg
-│   └── cli-preview.svg
-├── dist/                      # Standalone binary builds
+├── assets/
+│   └── banner.svg             # High-resolution vector header banner
+├── dist/
 │   └── Any Reset-v1.0.0-Portable.exe
-├── src/                       # Frontend application sources
-│   ├── index.html             # Light theme layout with Yellow buttons
-│   ├── style.css              # White & Yellow design system
-│   └── renderer.js            # UI logic, update downloader, & IPC bindings
-├── main.js                    # Electron main process, update streaming, Windows APIs
+├── src/
+│   ├── index.html             # Application interface structure
+│   ├── style.css              # White and yellow design system
+│   └── renderer.js            # Frontend logic and updater integration
+├── main.js                    # Core background process and Windows API bindings
 ├── preload.js                 # Secure context bridge
-├── reset-anydesk.bat          # Classic interactive CLI batch script
-├── Start-AnyReset.bat         # 1-click launcher for Windows
-├── package.json               # Project manifest and electron-builder config
+├── reset-anydesk.bat          # Legacy interactive batch utility
+├── Start-AnyReset.bat         # Windows development launcher
+├── package.json               # Application metadata and build configuration
 └── README.md                  # Documentation
 ```
 
@@ -140,4 +148,4 @@ Reset-Anydesk-with-Option/
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This software is released under the [MIT License](LICENSE).
