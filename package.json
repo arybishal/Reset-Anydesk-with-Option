@@ -1,0 +1,43 @@
+{
+  "name": "any-reset",
+  "productName": "Any Reset",
+  "version": "1.0.0",
+  "description": "Windows software to scan, clean, and reset AnyDesk to default factory state with fresh ID.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win portable"
+  },
+  "keywords": [
+    "anydesk",
+    "reset",
+    "cleaner",
+    "cache",
+    "windows",
+    "utility"
+  ],
+  "author": "arybishal",
+  "license": "MIT",
+  "build": {
+    "appId": "com.anyreset.utility",
+    "productName": "Any Reset",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "portable": {
+      "artifactName": "${productName}-v${version}-Portable.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.7.1"
+  }
+}

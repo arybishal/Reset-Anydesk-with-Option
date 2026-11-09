@@ -1,78 +1,108 @@
-# AnyDesk Reset Utility (with Interactive Options)
+# Any Reset ⚡ — AnyDesk Maintenance & Factory Reset Utility
 
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)](https://github.com/arybishal/Reset-Anydesk-with-Option)
-[![Shell](https://img.shields.io/badge/Script-Batch%20%2F%20PowerShell-107C41?logo=gnubash&logoColor=white)](https://github.com/arybishal/Reset-Anydesk-with-Option)
+[![Software](https://img.shields.io/badge/App-Any%20Reset%20GUI-000000?logo=electron&logoColor=white)](https://github.com/arybishal/Reset-Anydesk-with-Option/releases)
+[![Script](https://img.shields.io/badge/Script-Batch%20%2F%20PowerShell-107C41?logo=gnubash&logoColor=white)](reset-anydesk.bat)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 <p align="center">
-  <img src="assets/banner.svg" alt="AnyDesk Reset Utility Banner" width="100%" />
+  <img src="assets/banner.svg" alt="Any Reset Banner" width="100%" />
 </p>
 
-An intelligent, multi-option Windows utility script to safely restart, inspect, or thoroughly clean AnyDesk temporary caches with **automatic backup** prior to any changes.
+An intelligent, multi-option Windows utility software to **scan, clean, and completely reset AnyDesk to its default factory state** with an assigned **brand-new AnyDesk ID**. Built with an ultra-sleek, modern **monochrome Black & White design**.
 
 ---
 
-## 📸 Interface Preview
+## ⚡ Direct Download
 
-<p align="center">
-  <img src="assets/cli-preview.svg" alt="AnyDesk Reset Utility Console" width="85%" />
-</p>
+Grab the ready-to-run Windows standalone executable (no installation required):
 
----
-
-## ✨ Features & Menu Options
-
-When you run `reset-anydesk.bat`, an interactive menu with 4 options is presented:
-
-### 1️⃣ Option 1: Safe Reset (Restart Service)
-* **What it does:** Safely stops and restarts the background Windows `AnyDesk` service via PowerShell.
-* **Safety:** **100% Non-destructive.**
-* **Preserves:** AnyDesk ID, connection history, passwords, whitelist, and settings are completely untouched.
-* **Best used for:** Fixing frozen sessions, unresponsive remote incoming connections, or general connection glitches.
-
-### 2️⃣ Option 2: Open Configuration Folders
-* **What it does:** Automatically opens all relevant AnyDesk storage and configuration directories in Windows File Explorer:
-  - System directory: `%ProgramData%\AnyDesk`
-  - Roaming User directory: `%APPDATA%\AnyDesk`
-  - Local User directory: `%LOCALAPPDATA%\AnyDesk`
-* **Best used for:** Inspecting configuration files (`system.conf`, `user.conf`), reviewing trace logs, or manual troubleshooting.
-
-### 3️⃣ Option 3: Hard Reset (Cache Wipe + Auto-Backup)
-* **What it does:**
-  1. Prompts for explicit user confirmation (`Y/N`).
-  2. **Automatically creates a full backup** of both User and System AnyDesk configurations onto your Desktop in a folder named `AnyDesk-Backup-<RandomID>` using `robocopy`.
-  3. Stops the background `AnyDesk` service.
-  4. Purges corrupt or bloated temporary cache directories:
-     - `%TEMP%\AnyDesk`
-     - `%LOCALAPPDATA%\AnyDesk\cache`
-     - `%APPDATA%\AnyDesk\thumbnails`
-* **Safety:** The script backs up your configuration first. It deliberately does **not** erase your credentials, identity, or registry keys.
-* **Best used for:** Resolving display/thumbnail corruption, bloated disk cache, or persistent connection errors.
-
-### 4️⃣ Option 4: Exit
-* Exits the utility without executing any actions.
+📦 **[Download Any Reset v1.0.0 Portable (.exe)](https://github.com/arybishal/Reset-Anydesk-with-Option/releases/latest)**
 
 ---
 
-## 🚀 How to Run the Script
+## 🖤 Design & Aesthetic (Black & White Edition)
 
-### Method 1: Direct Batch File (Recommended)
-1. Download or clone this repository:
-   ```cmd
-   git clone https://github.com/arybishal/Reset-Anydesk-with-Option.git
-   ```
-2. Right-click on [`reset-anydesk.bat`](reset-anydesk.bat) and choose **"Run as administrator"**.
-3. Type the number corresponding to your choice (`1`, `2`, `3`, or `4`) and press Enter.
+Any Reset is built with a minimalist, high-contrast monochrome aesthetic:
+* **Deep Void Palette (`#09090b` / `#000000`)** with clean hairline borders (`#27272a`).
+* **Custom Windows Titlebar** with drag region, minimize/maximize/close controls, and an Administrator elevation indicator.
+* **Live System Telemetry Bar**:
+  - **Current AnyDesk ID** detection with 1-click clipboard copy.
+  - **AnyDesk Windows Service** monitor (*Running*, *Stopped*, or *Not Installed*) with toggle.
+  - **Process Counter** with a 1-click "Kill All" termination button.
+  - Direct "Launch AnyDesk" and "Elevate Admin" shortcuts.
 
-### Method 2: Command Prompt / PowerShell
-Open an elevated terminal (Admin) and run:
-```cmd
-cd path\to\Reset-Anydesk-with-Option
-reset-anydesk.bat
+---
+
+## ✨ Features
+
+### 1. 🔍 Comprehensive Scanner & Granular Cleaner
+Scans all AnyDesk footprints on your system:
+- **Cache & Temp Storage**: `%LOCALAPPDATA%\AnyDesk\cache`, `%APPDATA%\AnyDesk\cache`, `%ProgramData%\AnyDesk\cache`, `%TEMP%\AnyDesk`
+- **Thumbnails**: Remote connection preview snapshots (`%APPDATA%\AnyDesk\thumbnails`, `%LOCALAPPDATA%\AnyDesk\thumbnails`)
+- **Traces & Logs**: `ad.trace`, `ad_svc.trace`, `connection_trace.txt`
+- **User History**: Speed dial favorites, address book (`user.conf`), and text chats (`%APPDATA%\AnyDesk\chat`)
+- **Identity & Registration**: `system.conf`, `service.conf`
+- **Registry Traces**: `HKCU\Software\AnyDesk`
+
+**Capabilities:**
+* Displays exact item count and human-readable size (KB/MB).
+* Granular checkboxes with instant filter presets: *All*, *Cache & Logs Only (Safe)*, *User History*, *None*.
+* Clean selected items safely with automatic pre-clean backup.
+
+---
+
+### 2. 🚀 Factory Reset (Like Newly Installed)
+Resets AnyDesk completely to an out-of-the-box factory state:
+1. **Auto Safety Backup**: Complete snapshot saved to `C:\Users\<User>\AnyReset-Backups`.
+2. **Process Termination**: Closes all active `AnyDesk.exe` background and UI tasks.
+3. **Service Management**: Stops the background Windows service.
+4. **Identity & Cache Purge**: Clears hardware fingerprints, client UUIDs, authorization tokens, traces, and caches.
+5. **Registry Reset**: Purges Windows registry settings.
+6. **Re-initialization**: Starts the service fresh — **AnyDesk will generate and register a brand-new AnyDesk ID**!
+
+---
+
+### 3. 🛡️ Backups & 1-Click Restore Hub
+* Automatically saves a timestamped snapshot before every wipe or reset.
+* Lists all saved snapshots with dates, original AnyDesk IDs, file counts, and sizes.
+* **1-Click Restore**: Revert to any previous backup at any time.
+* Direct button to explore backup archives in Windows Explorer.
+
+---
+
+### 4. 🧰 Tools & Utilities
+* **Safe Reset**: Non-destructively restarts the AnyDesk Windows service to resolve frozen incoming connections without losing your ID or settings.
+* **Explorer Jump**: Quick-open buttons for `%ProgramData%`, `%APPDATA%`, `%LOCALAPPDATA%`, and `%TEMP%`.
+* **Process & Service Controls**: Force terminate all processes, start/stop service.
+* **CLI Utility**: Original `reset-anydesk.bat` is preserved for terminal/headless usage.
+
+---
+
+## 🚀 How to Run
+
+### Option A: Portable Standalone Executable (Recommended)
+Download and run:
+```text
+dist\Any Reset-v1.0.0-Portable.exe
 ```
 
-> [!IMPORTANT]
-> **Administrator Privileges Required:** Restarting Windows services (`Get-Service AnyDesk`) and managing system directories (`%ProgramData%\AnyDesk`) requires elevated administrative permissions. The script includes an automated check (`fltmc`) and will notify you if elevation is missing.
+### Option B: Run from Source / Development
+```bash
+# Clone the repository
+git clone https://github.com/arybishal/Reset-Anydesk-with-Option.git
+cd Reset-Anydesk-with-Option
+
+# Install dependencies
+npm install
+
+# Start the application
+npm start
+```
+Or double-click [`Start-AnyReset.bat`](Start-AnyReset.bat).
+
+### Option C: Classic Batch Script (CLI)
+Right-click [`reset-anydesk.bat`](reset-anydesk.bat) and choose **"Run as administrator"**.
 
 ---
 
@@ -80,26 +110,22 @@ reset-anydesk.bat
 
 ```text
 Reset-Anydesk-with-Option/
-├── assets/
-│   ├── banner.svg         # High-resolution repo header banner
-│   └── cli-preview.svg    # Console workflow mockup preview
-├── reset-anydesk.bat      # Ready-to-run executable batch script
-├── Reset Any Desk.MD      # Reference copy of the script
-├── README.md              # Documentation and guide
-└── LICENSE                # MIT License
+├── assets/                    # Graphic assets and banners
+│   ├── banner.svg
+│   └── cli-preview.svg
+├── dist/                      # Standalone binary builds
+│   └── Any Reset-v1.0.0-Portable.exe
+├── src/                       # Frontend application sources
+│   ├── index.html             # High-contrast Black & White UI
+│   ├── style.css              # Monochrome design system
+│   └── renderer.js            # UI logic & IPC bindings
+├── main.js                    # Electron main process & Windows APIs
+├── preload.js                 # Secure context bridge
+├── reset-anydesk.bat          # Classic interactive CLI batch script
+├── Start-AnyReset.bat         # 1-click launcher for Windows
+├── package.json               # Project manifest and electron-builder config
+└── README.md                  # Documentation
 ```
-
----
-
-## 🛡️ Backup & Restore Note
-
-If you choose **Option 3 (Hard Reset)**, your original files are safely copied to:
-```text
-C:\Users\<YourUsername>\Desktop\AnyDesk-Backup-XXXXX\
-├── System\   (from %ProgramData%\AnyDesk)
-└── User\     (from %APPDATA%\AnyDesk)
-```
-If you ever need to restore your backed-up settings, simply copy the files back to their respective directories.
 
 ---
 

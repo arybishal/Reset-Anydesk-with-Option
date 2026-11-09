@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Any Reset - AnyDesk Maintenance & Factory Reset Utility</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-bw">
+  <!-- Custom Windows Titlebar -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <div class="app-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+      </div>
+      <span class="app-title">ANY RESET</span>
+      <span class="app-version">v1.0.0</span>
+    </div>
+
+    <div class="titlebar-center">
+      <div id="admin-badge" class="badge badge-outline">
+        <span class="dot"></span>
+        <span id="admin-text">Checking Privileges...</span>
+      </div>
+    </div>
+
+    <div class="titlebar-right">
+      <button class="win-btn" id="btn-minimize" title="Minimize">
+        <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/></svg>
+      </button>
+      <button class="win-btn" id="btn-maximize" title="Maximize">
+        <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="4" y="4" width="16" height="16" rx="1"/></svg>
+      </button>
+      <button class="win-btn win-btn-close" id="btn-close" title="Close">
+        <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Top System Telemetry Bar -->
+    <header class="telemetry-bar">
+      <!-- AnyDesk ID Card -->
+      <div class="telemetry-card">
+        <div class="telemetry-label">CURRENT ANYDESK ID</div>
+        <div class="telemetry-value-row">
+          <span id="current-id-val" class="id-display">Detecting...</span>
+          <button id="btn-copy-id" class="icon-btn" title="Copy AnyDesk ID">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Service Status Card -->
+      <div class="telemetry-card">
+        <div class="telemetry-label">WINDOWS SERVICE</div>
+        <div class="telemetry-value-row">
+          <div class="status-indicator">
+            <span id="service-dot" class="status-dot"></span>
+            <span id="service-status-val">Checking...</span>
+          </div>
+          <button id="btn-toggle-service" class="btn-micro" title="Toggle Service">Restart</button>
+        </div>
+      </div>
+
+      <!-- Process Status Card -->
+      <div class="telemetry-card">
+        <div class="telemetry-label">ANYDESK PROCESSES</div>
+        <div class="telemetry-value-row">
+          <span id="process-status-val">0 Active</span>
+          <button id="btn-kill-proc" class="btn-micro" title="Terminate all AnyDesk tasks">Kill All</button>
+        </div>
+      </div>
+
+      <!-- Quick Actions Card -->
+      <div class="telemetry-card telemetry-card-actions">
+        <div class="telemetry-label">SHORTCUTS</div>
+        <div class="telemetry-btn-group">
+          <button id="btn-launch-anydesk" class="btn btn-sm btn-white">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Launch AnyDesk
+          </button>
+          <button id="btn-relaunch-admin" class="btn btn-sm btn-outline hidden" title="Relaunch with full administrator privileges">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Elevate Admin
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-scanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Scanner & Cleaner
+      </button>
+      <button class="nav-tab" data-tab="tab-factory-reset">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"/></svg>
+        Factory Reset (New ID)
+      </button>
+      <button class="nav-tab" data-tab="tab-backups">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Backups & Restore
+        <span id="backup-badge-count" class="tab-badge">0</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-tools">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Folders & Utilities
+      </button>
+      <button class="nav-tab" data-tab="tab-logs">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        Console Log
+      </button>
+    </nav>
+
+    <!-- Tab Contents Container -->
+    <main class="main-content">
+
+      <!-- TAB 1: SCANNER & CLEANER -->
+      <section id="tab-scanner" class="tab-pane active">
+        <!-- Scanner Command Bar -->
+        <div class="scanner-toolbar">
+          <div class="toolbar-left">
+            <button id="btn-scan" class="btn btn-white">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Scan AnyDesk Data
+            </button>
+            <button id="btn-quick-clean" class="btn btn-outline" title="Immediately clean cache & temporary files without touching ID">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              Quick Cache Clean
+            </button>
+          </div>
+
+          <div class="toolbar-stats" id="scanner-stats-banner">
+            <span class="stat-pill"><strong>Items Found:</strong> <span id="stat-files-count">0</span></span>
+            <span class="stat-pill"><strong>Total Size:</strong> <span id="stat-total-size">0.00 MB</span></span>
+            <span class="stat-pill"><strong>Selected:</strong> <span id="stat-selected-count">0</span> items (<span id="stat-selected-size">0.00 MB</span>)</span>
+          </div>
+
+          <div class="toolbar-right">
+            <button id="btn-delete-selected" class="btn btn-white" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              Clean Selected
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Select presets bar -->
+        <div class="filter-strip">
+          <div class="presets-group">
+            <span class="filter-label">Quick Select:</span>
+            <button class="btn-chip" id="select-all-btn">All</button>
+            <button class="btn-chip active" id="select-cache-btn">Cache & Logs Only (Safe)</button>
+            <button class="btn-chip" id="select-history-btn">User History</button>
+            <button class="btn-chip" id="select-none-btn">None</button>
+          </div>
+
+          <div class="backup-toggle-wrapper">
+            <label class="checkbox-container">
+              <input type="checkbox" id="chk-auto-backup" checked>
+              <span class="checkmark"></span>
+              Create automatic backup before cleaning
+            </label>
+          </div>
+        </div>
+
+        <!-- Scanned Items List Container -->
+        <div class="scanned-items-container" id="scanned-list">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <h3>Ready to Scan</h3>
+            <p>Click "Scan AnyDesk Data" above to discover all cached files, traces, configurations, and identity tokens.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: FACTORY RESET (NEW INSTALL) -->
+      <section id="tab-factory-reset" class="tab-pane">
+        <div class="factory-reset-card">
+          <div class="factory-header">
+            <div class="factory-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"/></svg>
+            </div>
+            <div class="factory-titles">
+              <h2>Reset AnyDesk to Default (Brand New Install)</h2>
+              <p>Replaces your current AnyDesk identity with a completely fresh, out-of-the-box state.</p>
+            </div>
+          </div>
+
+          <div class="factory-comparison-grid">
+            <div class="comp-col">
+              <h4>What Will Happen</h4>
+              <ul class="comp-list">
+                <li><span class="list-bullet">✓</span> Brand new AnyDesk ID generated on next start</li>
+                <li><span class="list-bullet">✓</span> All temporary and session caches wiped</li>
+                <li><span class="list-bullet">✓</span> Diagnostic and connection logs purged</li>
+                <li><span class="list-bullet">✓</span> Speed dial and recent connection history cleared</li>
+                <li><span class="list-bullet">✓</span> Windows service cleanly stopped and re-initialized</li>
+                <li><span class="list-bullet">✓</span> Works like a completely clean, fresh install</li>
+              </ul>
+            </div>
+
+            <div class="comp-col">
+              <h4>Safety Guarantee</h4>
+              <ul class="comp-list">
+                <li><span class="list-bullet">🛡️</span> Automatic full backup created before wiping</li>
+                <li><span class="list-bullet">🛡️</span> 1-click restore available anytime in "Backups & Restore"</li>
+                <li><span class="list-bullet">🛡️</span> Running AnyDesk processes safely closed</li>
+                <li><span class="list-bullet">🛡️</span> AnyDesk binary remains installed (no need to re-download)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="reset-action-box">
+            <div class="reset-warning">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>This operation erases your current AnyDesk ID and configurations. A safety backup will be created automatically.</span>
+            </div>
+
+            <button id="btn-trigger-factory-reset" class="btn btn-lg btn-white">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Reset AnyDesk to Default Now
+            </button>
+          </div>
+
+          <!-- Progress Workflow Tracker -->
+          <div id="factory-progress-box" class="progress-box hidden">
+            <h4>Factory Reset Progress</h4>
+            <div class="progress-step-list">
+              <div class="progress-step" id="step-backup"><span class="step-num">1</span> Creating automatic backup</div>
+              <div class="progress-step" id="step-kill"><span class="step-num">2</span> Closing AnyDesk processes</div>
+              <div class="progress-step" id="step-stop-svc"><span class="step-num">3</span> Stopping Windows service</div>
+              <div class="progress-step" id="step-wipe"><span class="step-num">4</span> Wiping identity and cache files</div>
+              <div class="progress-step" id="step-reg"><span class="step-num">5</span> Purging registry references</div>
+              <div class="progress-step" id="step-start-svc"><span class="step-num">6</span> Starting fresh service (generates new ID)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: BACKUPS & RESTORE -->
+      <section id="tab-backups" class="tab-pane">
+        <div class="backups-toolbar">
+          <div class="toolbar-left">
+            <h3>Saved Backups</h3>
+            <p>Every time you clean or reset, a timestamped snapshot of your AnyDesk configurations is saved here.</p>
+          </div>
+          <div class="toolbar-right">
+            <button id="btn-open-backups-folder" class="btn btn-outline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              Open Backups Folder
+            </button>
+            <button id="btn-refresh-backups" class="btn btn-white">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="backups-table-container">
+          <table class="table-bw" id="backups-table">
+            <thead>
+              <tr>
+                <th>Backup Name / Date</th>
+                <th>Label</th>
+                <th>AnyDesk ID</th>
+                <th>Files</th>
+                <th>Size</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="backups-tbody">
+              <tr>
+                <td colspan="6" class="text-center py-8 text-muted">No backups found yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: TOOLS & UTILITIES -->
+      <section id="tab-tools" class="tab-pane">
+        <div class="tools-grid">
+          <!-- Folder Quick Access -->
+          <div class="card-bw">
+            <div class="card-bw-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <h3>AnyDesk File Locations</h3>
+            </div>
+            <p class="card-desc">Directly explore the storage directories on your Windows system.</p>
+            <div class="btn-stack">
+              <button class="btn btn-outline" data-open="programdata">
+                <span>System Directory (%ProgramData%\AnyDesk)</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </button>
+              <button class="btn btn-outline" data-open="appdata">
+                <span>User Roaming (%APPDATA%\AnyDesk)</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </button>
+              <button class="btn btn-outline" data-open="localappdata">
+                <span>User Local (%LOCALAPPDATA%\AnyDesk)</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </button>
+              <button class="btn btn-outline" data-open="temp">
+                <span>Windows Temp (%TEMP%\AnyDesk)</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Service & Process Operations -->
+          <div class="card-bw">
+            <div class="card-bw-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+              <h3>Service & Process Control</h3>
+            </div>
+            <p class="card-desc">Safe diagnostic controls for resolving frozen or unresponsive connections.</p>
+            <div class="btn-stack">
+              <button class="btn btn-outline" id="btn-safe-restart">
+                <span>Safe Reset (Restart Service - Preserves ID)</span>
+                <span class="badge-mini">Safe</span>
+              </button>
+              <button class="btn btn-outline" id="btn-start-service">
+                <span>Start AnyDesk Windows Service</span>
+              </button>
+              <button class="btn btn-outline" id="btn-stop-service">
+                <span>Stop AnyDesk Windows Service</span>
+              </button>
+              <button class="btn btn-outline" id="btn-kill-all-procs">
+                <span>Force Terminate All AnyDesk Tasks</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: LIVE LOGS -->
+      <section id="tab-logs" class="tab-pane">
+        <div class="logs-toolbar">
+          <div class="toolbar-left">
+            <span class="logs-title">System Activity Log</span>
+            <span class="text-muted" id="log-count-text">0 events recorded</span>
+          </div>
+          <div class="toolbar-right">
+            <button id="btn-copy-logs" class="btn btn-sm btn-outline">Copy Log</button>
+            <button id="btn-clear-logs" class="btn btn-sm btn-outline">Clear</button>
+          </div>
+        </div>
+
+        <div class="console-box" id="console-output">
+          <div class="log-line log-info">
+            <span class="log-time">[Startup]</span> Any Reset software initialized. Ready for scanning.
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Status -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span class="dot dot-ready"></span>
+        <span id="footer-status">Ready</span>
+      </div>
+      <div class="footer-right">
+        <span>Monochrome Edition</span>
+        <span>•</span>
+        <span>Any Reset for Windows</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay hidden" id="confirm-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Confirm Action</h3>
+        <button class="icon-btn" id="btn-modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body-text">
+        Are you sure you want to proceed?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-modal-cancel">Cancel</button>
+        <button class="btn btn-white" id="btn-modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

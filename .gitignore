@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build artifacts
+dist/
+
+# Operating System
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Backups created during runtime
+AnyReset-Backups/
