@@ -1,4 +1,4 @@
-// Any Reset - Renderer Script
+// Any Reset - Renderer Script (White Background, Black Text, Yellow Buttons, No Emojis)
 
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
@@ -6,9 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnMaximize = document.getElementById('btn-maximize');
   const btnClose = document.getElementById('btn-close');
 
-  const adminBadge = document.getElementById('admin-badge');
-  const adminText = document.getElementById('admin-text');
   const btnRelaunchAdmin = document.getElementById('btn-relaunch-admin');
+
+  const headerVersion = document.getElementById('header-version');
+  const toolsVersion = document.getElementById('tools-version');
+  const btnCheckUpdateHeader = document.getElementById('btn-check-update-header');
+  const btnCheckUpdateTools = document.getElementById('btn-check-update-tools');
 
   const currentIdVal = document.getElementById('current-id-val');
   const btnCopyId = document.getElementById('btn-copy-id');
@@ -64,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Footer Elements
   const footerStatus = document.getElementById('footer-status');
 
-  // Modal Elements
+  // Confirmation Modal Elements
   const confirmModal = document.getElementById('confirm-modal');
   const modalTitle = document.getElementById('modal-title');
   const modalBodyText = document.getElementById('modal-body-text');
@@ -72,11 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnModalConfirm = document.getElementById('btn-modal-confirm');
   const btnModalClose = document.getElementById('btn-modal-close');
 
+  // Update Modal Elements
+  const updateModal = document.getElementById('update-modal');
+  const updateModalTitle = document.getElementById('update-modal-title');
+  const updateModalBody = document.getElementById('update-modal-body');
+  const btnUpdateClose = document.getElementById('btn-update-close');
+  const btnUpdateAction = document.getElementById('btn-update-action');
+  const btnUpdateModalClose = document.getElementById('btn-update-modal-close');
+
   // State
   let currentScannedItems = [];
   let selectedItemIds = new Set();
   let logEventsCount = 1;
   let modalResolver = null;
+  let pendingUpdateData = null;
+  let downloadedUpdatePath = null;
 
   // Window Controls
   btnMinimize.addEventListener('click', () => window.api.minimizeWindow());
@@ -151,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Format Bytes helper
   function formatBytes(bytes) {
     if (!bytes || bytes === 0) return '0 B';
     const k = 1024;
@@ -166,20 +178,21 @@ document.addEventListener('DOMContentLoaded', () => {
       footerStatus.textContent = 'Updating system status...';
       const status = await window.api.getStatus();
 
-      // Admin badge
+      // Version display
+      if (status.appVersion) {
+        headerVersion.textContent = `v${status.appVersion}`;
+        if (toolsVersion) toolsVersion.textContent = `v${status.appVersion}`;
+      }
+
+      // Admin button display
       if (status.isAdmin) {
-        adminBadge.className = 'badge badge-elevated';
-        adminText.textContent = 'ADMIN ELEVATED';
         btnRelaunchAdmin.classList.add('hidden');
       } else {
-        adminBadge.className = 'badge badge-outline';
-        adminText.textContent = 'STANDARD USER';
         btnRelaunchAdmin.classList.remove('hidden');
       }
 
       // AnyDesk ID
       if (status.anydeskId) {
-        // format in groups of 3
         const idStr = String(status.anydeskId);
         const formatted = idStr.replace(/(\d{3})(?=\d)/g, '$1 ');
         currentIdVal.textContent = formatted;
@@ -257,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
       statFilesCount.textContent = scan.totalFiles;
       statTotalSize.textContent = formatBytes(scan.totalBytes);
 
-      // Select default checked items that exist
       selectedItemIds.clear();
       currentScannedItems.forEach((i) => {
         if (i.defaultChecked && i.exists) {
@@ -282,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Group items by category
     const categories = [
       { key: 'cache_temp', title: 'CACHE & TEMPORARY FILES', desc: 'Can be safely cleaned anytime' },
       { key: 'traces_logs', title: 'TRACES & DIAGNOSTIC LOGS', desc: 'Session diagnostics and connection history' },
@@ -307,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <span>${cat.title}</span>
             </div>
             <div class="group-stats">
-              ${groupCount} item(s) • ${formatBytes(groupBytes)}
+              ${groupCount} item(s) - ${formatBytes(groupBytes)}
             </div>
           </div>
           <div class="scanned-items-list">
@@ -359,7 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     scannedList.innerHTML = html;
 
-    // Attach checkbox events
     document.querySelectorAll('.item-chk').forEach((chk) => {
       chk.addEventListener('change', (e) => {
         const id = e.target.getAttribute('data-id');
@@ -440,19 +450,18 @@ document.addEventListener('DOMContentLoaded', () => {
   btnDeleteSelected.addEventListener('click', async () => {
     if (selectedItemIds.size === 0) return;
 
-    // Check if any high danger items are selected
     const hasIdentity = currentScannedItems.some(
       (i) => selectedItemIds.has(i.id) && i.category === 'identity_reset'
     );
 
     let warningHtml = `<p>You are about to delete <strong>${selectedItemIds.size} selected item(s)</strong>.</p>`;
     if (hasIdentity) {
-      warningHtml += `<p style="margin-top:10px; color:#ffffff; background:#18181b; padding:8px; border:1px solid #71717a; border-radius:4px;">
-        ⚠️ <strong>Warning:</strong> Identity files are selected. This will erase your current AnyDesk ID and generate a new one!
+      warningHtml += `<p style="margin-top:10px; color:#b91c1c; background:#fee2e2; padding:8px; border:1px solid #ef4444; border-radius:4px;">
+        <strong>Warning:</strong> Identity files are selected. This will erase your current AnyDesk ID and generate a new one!
       </p>`;
     }
     if (chkAutoBackup.checked) {
-      warningHtml += `<p style="margin-top:10px; font-size:11px; color:#888892;">✓ A complete safety backup will be created before cleaning.</p>`;
+      warningHtml += `<p style="margin-top:10px; font-size:11px; color:#64748b;">Notice: An automatic backup will be created before cleaning.</p>`;
     }
 
     const confirmed = await showConfirm('Confirm Cleanup', warningHtml, 'Delete Selected');
@@ -504,13 +513,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmed = await showConfirm(
       'Factory Reset AnyDesk',
       `<p>This will reset AnyDesk completely to its <strong>out-of-the-box factory state</strong>.</p>
-       <ul style="margin:10px 0 10px 20px; font-size:12px; color:#d4d4d8;">
+       <ul style="margin:10px 0 10px 20px; font-size:12px; color:#1e293b;">
          <li>Generates a brand new AnyDesk ID</li>
-         <li>Clears all connection histories & chats</li>
+         <li>Clears all connection histories and chats</li>
          <li>Wipes all cache and traces</li>
          <li>Automatic full backup will be preserved</li>
        </ul>
-       <p style="font-size:11px; color:#888892;">You can restore your previous state anytime from the Backups tab.</p>`,
+       <p style="font-size:11px; color:#64748b;">You can restore your previous state anytime from the Backups tab.</p>`,
       'Reset to Default Now'
     );
 
@@ -529,7 +538,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('step-start-svc')
     ];
 
-    // Reset steps UI
     steps.forEach((s) => (s.className = 'progress-step'));
 
     function markStepActive(idx) {
@@ -563,10 +571,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       await showConfirm(
         'Factory Reset Complete',
-        `<p>🎉 AnyDesk has been completely reset to default state!</p>
+        `<p>AnyDesk has been completely reset to default state.</p>
          <p style="margin-top:10px;"><strong>Assigned New ID:</strong> ${result.newId}</p>
-         <p style="margin-top:6px; font-size:11px; color:#888892;">Your prior settings were backed up to: <code>${result.backupFolder}</code></p>`,
-        'Great!'
+         <p style="margin-top:6px; font-size:11px; color:#64748b;">Your prior settings were backed up to: <code>${result.backupFolder}</code></p>`,
+        'OK'
       );
     } catch (e) {
       appendLog('error', `Factory reset error: ${e.message}`);
@@ -597,16 +605,16 @@ document.addEventListener('DOMContentLoaded', () => {
         html += `
           <tr>
             <td>
-              <div style="font-weight:600; color:#ffffff;">${b.folderName}</div>
-              <div style="font-size:10px; color:#71717a;">${dateStr}</div>
+              <div style="font-weight:700; color:#000000;">${b.folderName}</div>
+              <div style="font-size:10px; color:#64748b;">${dateStr}</div>
             </td>
             <td><span class="badge-danger-safe">${b.label || 'Snapshot'}</span></td>
-            <td><code style="font-family:var(--font-mono); font-size:11px;">${b.originalId}</code></td>
+            <td><code style="font-family:var(--font-mono); font-size:11px; font-weight:700;">${b.originalId}</code></td>
             <td>${b.fileCount || 0}</td>
             <td>${formatBytes(b.totalBytes)}</td>
             <td class="text-right">
               <div class="table-actions">
-                <button class="btn btn-sm btn-white btn-restore" data-folder="${b.folderName}">Restore</button>
+                <button class="btn btn-sm btn-restore" data-folder="${b.folderName}">Restore</button>
                 <button class="btn btn-sm btn-outline btn-del-backup" data-folder="${b.folderName}">Delete</button>
               </div>
             </td>
@@ -616,14 +624,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       backupsTbody.innerHTML = html;
 
-      // Attach restore and delete handlers
       document.querySelectorAll('.btn-restore').forEach((btn) => {
         btn.addEventListener('click', async (e) => {
           const folder = e.target.getAttribute('data-folder');
           const confirmed = await showConfirm(
             'Restore Backup',
             `<p>Restore AnyDesk to the state from <strong>${folder}</strong>?</p>
-             <p style="margin-top:8px; font-size:11px; color:#888892;">This will replace your current AnyDesk configurations and restore the backed-up ID.</p>`,
+             <p style="margin-top:8px; font-size:11px; color:#64748b;">This will replace your current AnyDesk configurations and restore the backed-up ID.</p>`,
             'Restore Now'
           );
           if (!confirmed) return;
@@ -632,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const res = await window.api.restoreBackup(folder);
           if (res.success) {
             await refreshStatus();
-            await showConfirm('Backup Restored', `<p>AnyDesk configuration restored successfully!</p><p>Active ID: <strong>${res.restoredId || 'Restored'}</strong></p>`, 'OK');
+            await showConfirm('Backup Restored', `<p>AnyDesk configuration restored successfully.</p><p>Active ID: <strong>${res.restoredId || 'Restored'}</strong></p>`, 'OK');
           } else {
             appendLog('error', `Restore error: ${res.error}`);
           }
@@ -701,6 +708,142 @@ document.addEventListener('DOMContentLoaded', () => {
     consoleOutput.innerHTML = '';
     logEventsCount = 0;
     logCountText.textContent = '0 events recorded';
+  });
+
+  // ==========================================
+  // AUTO-UPDATE SYSTEM UI
+  // ==========================================
+
+  async function handleCheckForUpdates() {
+    footerStatus.textContent = 'Checking GitHub releases for updates...';
+    appendLog('info', 'Contacting GitHub API for latest release...');
+
+    updateModalTitle.textContent = 'Checking for Updates...';
+    updateModalBody.innerHTML = `
+      <div style="text-align:center; padding:20px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="spin"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        <p style="margin-top:12px; font-weight:700;">Querying repository releases...</p>
+      </div>
+    `;
+    btnUpdateAction.classList.add('hidden');
+    btnUpdateClose.textContent = 'Cancel';
+    updateModal.classList.remove('hidden');
+
+    try {
+      const res = await window.api.checkForUpdates();
+      if (!res.success) {
+        updateModalTitle.textContent = 'Update Check Failed';
+        updateModalBody.innerHTML = `<p style="color:#b91c1c;">Could not check for updates: ${res.error}</p>`;
+        btnUpdateClose.textContent = 'Close';
+        return;
+      }
+
+      if (res.hasUpdate) {
+        pendingUpdateData = res;
+        updateModalTitle.textContent = `New Update Available: ${res.latestVersion}`;
+        updateModalBody.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="background:var(--btn-yellow-faint); padding:10px; border:1px solid var(--border-dark); border-radius:4px;">
+              <div><strong>Current Version:</strong> ${res.currentVersion}</div>
+              <div><strong>Latest Version:</strong> ${res.latestVersion}</div>
+              ${res.asset ? `<div><strong>Download Size:</strong> ${formatBytes(res.asset.size)}</div>` : ''}
+            </div>
+            <div>
+              <div style="font-weight:700; margin-bottom:4px;">Release Notes:</div>
+              <pre style="background:var(--bg-secondary); padding:8px; border:1px solid var(--border-color); border-radius:4px; font-size:11px; max-height:140px; overflow-y:auto; white-space:pre-wrap;">${res.releaseNotes}</pre>
+            </div>
+            <div id="update-progress-area" class="update-progress-container hidden">
+              <div class="update-meta-row">
+                <span id="update-progress-label">Downloading update...</span>
+                <span id="update-progress-percent">0%</span>
+              </div>
+              <div class="update-progress-bar-bg">
+                <div id="update-progress-fill" class="update-progress-bar-fill"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        btnUpdateAction.textContent = 'Download Update Now';
+        btnUpdateAction.classList.remove('hidden');
+        btnUpdateClose.textContent = 'Later';
+      } else {
+        updateModalTitle.textContent = 'You are Up to Date';
+        updateModalBody.innerHTML = `
+          <div style="text-align:center; padding:16px;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <h4 style="margin-top:10px; font-weight:800;">Any Reset is up to date</h4>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Installed Version: <strong>${res.currentVersion}</strong> (Latest on GitHub)</p>
+          </div>
+        `;
+        btnUpdateAction.classList.add('hidden');
+        btnUpdateClose.textContent = 'OK';
+      }
+    } catch (e) {
+      updateModalTitle.textContent = 'Error';
+      updateModalBody.innerHTML = `<p style="color:#b91c1c;">${e.message}</p>`;
+      btnUpdateAction.classList.add('hidden');
+      btnUpdateClose.textContent = 'Close';
+    } finally {
+      footerStatus.textContent = 'Ready';
+    }
+  }
+
+  btnCheckUpdateHeader.addEventListener('click', handleCheckForUpdates);
+  btnCheckUpdateTools.addEventListener('click', handleCheckForUpdates);
+
+  btnUpdateClose.addEventListener('click', () => {
+    updateModal.classList.add('hidden');
+  });
+
+  btnUpdateModalClose.addEventListener('click', () => {
+    updateModal.classList.add('hidden');
+  });
+
+  // Handle Download Action
+  btnUpdateAction.addEventListener('click', async () => {
+    if (downloadedUpdatePath) {
+      window.api.runDownloadedUpdate(downloadedUpdatePath);
+      return;
+    }
+
+    if (!pendingUpdateData || !pendingUpdateData.asset) {
+      return;
+    }
+
+    const { downloadUrl, name } = pendingUpdateData.asset;
+    const progressArea = document.getElementById('update-progress-area');
+    const progressFill = document.getElementById('update-progress-fill');
+    const progressPercent = document.getElementById('update-progress-percent');
+    const progressLabel = document.getElementById('update-progress-label');
+
+    if (progressArea) progressArea.classList.remove('hidden');
+    btnUpdateAction.disabled = true;
+    btnUpdateAction.textContent = 'Downloading...';
+
+    window.api.onUpdateProgress((p) => {
+      if (progressFill) progressFill.style.width = `${p.percent}%`;
+      if (progressPercent) progressPercent.textContent = `${p.percent}%`;
+      if (progressLabel) progressLabel.textContent = `Downloaded ${formatBytes(p.receivedBytes)} of ${formatBytes(p.totalBytes)}`;
+    });
+
+    try {
+      const result = await window.api.downloadUpdate(downloadUrl, name);
+      if (result.success) {
+        downloadedUpdatePath = result.filePath;
+        if (progressLabel) progressLabel.textContent = 'Download Complete!';
+        btnUpdateAction.disabled = false;
+        btnUpdateAction.textContent = 'Launch Update & Restart';
+        btnUpdateClose.textContent = 'Close';
+      } else {
+        if (progressLabel) progressLabel.textContent = 'Download failed.';
+        btnUpdateAction.disabled = false;
+        btnUpdateAction.textContent = 'Retry Download';
+      }
+    } catch (e) {
+      appendLog('error', `Download error: ${e.message}`);
+      btnUpdateAction.disabled = false;
+      btnUpdateAction.textContent = 'Retry Download';
+    }
   });
 
   // Initial Load

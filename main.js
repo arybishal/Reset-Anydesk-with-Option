@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { exec, execSync } = require('child_process');
+const https = require('https');
+const http = require('http');
+const { exec, execSync, spawn } = require('child_process');
 
 let mainWindow = null;
 
@@ -13,6 +15,8 @@ const PATHS = {
   TEMP: path.join(process.env.TEMP || '', 'AnyDesk'),
   BACKUP_DIR: path.join(process.env.USERPROFILE || 'C:\\', 'AnyReset-Backups')
 };
+
+const GITHUB_REPO = 'arybishal/Reset-Anydesk-with-Option';
 
 function sendLog(level, message) {
   const timestamp = new Date().toLocaleTimeString();
@@ -62,7 +66,7 @@ function getDirectorySizeAndCount(dirPath) {
         fileCount += 1;
       }
     } catch (e) {
-      // Permission or locked file
+      // Ignore inaccessible files
     }
   }
 
@@ -156,7 +160,8 @@ async function getStatus() {
     anydeskId,
     exePath,
     installed: !!exePath,
-    paths: PATHS
+    paths: PATHS,
+    appVersion: app.getVersion()
   };
 }
 
@@ -185,7 +190,7 @@ async function scanAllItems() {
       type: 'directory',
       dangerLevel: 'safe',
       defaultChecked: true,
-      description: 'Temporary files cached in roaming profile.'
+      description: 'Temporary files cached in roaming user profile.'
     },
     {
       id: 'progdata_cache',
@@ -419,14 +424,12 @@ async function createBackup(label = 'Manual') {
     let filesCopied = 0;
     let bytesCopied = 0;
 
-    // Backup ProgramData AnyDesk
     if (fs.existsSync(PATHS.PROGRAM_DATA)) {
       const destSystem = path.join(targetDir, 'System');
       fs.mkdirSync(destSystem, { recursive: true });
       await execPromise(`robocopy "${PATHS.PROGRAM_DATA}" "${destSystem}" /E /COPY:DAT /R:1 /W:1 2>nul`);
     }
 
-    // Backup Roaming AnyDesk
     if (fs.existsSync(PATHS.APPDATA_ROAMING)) {
       const destUser = path.join(targetDir, 'User');
       fs.mkdirSync(destUser, { recursive: true });
@@ -490,7 +493,6 @@ async function cleanSpecificItems(itemIds, shouldBackup = true) {
     await createBackup('Pre-Clean Backup');
   }
 
-  // Check if any identity or service files need cleaning; if so, stop service and processes
   await stopAnyDeskProcesses();
   await stopAnyDeskService();
 
@@ -526,7 +528,6 @@ async function cleanSpecificItems(itemIds, shouldBackup = true) {
     }
   }
 
-  // If service is installed, attempt to start it
   const serviceStatus = await getAnyDeskServiceStatus();
   if (serviceStatus !== 'NotInstalled') {
     await startAnyDeskService();
@@ -546,15 +547,12 @@ async function cleanSpecificItems(itemIds, shouldBackup = true) {
 
 async function performFactoryReset() {
   sendLog('info', '=======================================================');
-  sendLog('info', '🚀 STARTING FULL FACTORY RESET (NEW INSTALL MODE)');
+  sendLog('info', 'STARTING FULL FACTORY RESET (NEW INSTALL MODE)');
   sendLog('info', '=======================================================');
 
   // Step 1: Automatic Safety Backup
   sendLog('info', '[Step 1/6] Performing automatic pre-reset backup...');
   const backupRes = await createBackup('Pre-Factory-Reset');
-  if (!backupRes.success) {
-    sendLog('warn', 'Backup had warnings, but continuing with caution.');
-  }
 
   // Step 2: Stop AnyDesk Processes
   sendLog('info', '[Step 2/6] Closing all active AnyDesk instances...');
@@ -568,7 +566,6 @@ async function performFactoryReset() {
   sendLog('info', '[Step 4/6] Wiping all identity tokens, licenses, caches, and history...');
 
   const targetsToDelete = [
-    // Identity Files (Generates Brand New AnyDesk ID on next start!)
     path.join(PATHS.PROGRAM_DATA, 'system.conf'),
     path.join(PATHS.PROGRAM_DATA, 'service.conf'),
     path.join(PATHS.PROGRAM_DATA, 'service.conf.lock'),
@@ -576,22 +573,16 @@ async function performFactoryReset() {
     path.join(PATHS.APPDATA_ROAMING, 'system.conf'),
     path.join(PATHS.APPDATA_ROAMING, 'user.conf'),
     path.join(PATHS.APPDATA_ROAMING, 'user.conf.lock'),
-
-    // Caches & Temps
     path.join(PATHS.APPDATA_LOCAL, 'cache'),
     path.join(PATHS.APPDATA_ROAMING, 'cache'),
     path.join(PATHS.PROGRAM_DATA, 'cache'),
     path.join(PATHS.APPDATA_ROAMING, 'thumbnails'),
     path.join(PATHS.APPDATA_LOCAL, 'thumbnails'),
     PATHS.TEMP,
-
-    // Traces & Diagnostic Logs
     path.join(PATHS.APPDATA_ROAMING, 'ad.trace'),
     path.join(PATHS.APPDATA_ROAMING, 'connection_trace.txt'),
     path.join(PATHS.PROGRAM_DATA, 'ad_svc.trace'),
     path.join(PATHS.PROGRAM_DATA, 'connection_trace.txt'),
-
-    // Chat Transcripts
     path.join(PATHS.APPDATA_ROAMING, 'chat')
   ];
 
@@ -614,12 +605,11 @@ async function performFactoryReset() {
   sendLog('info', '[Step 5/6] Resetting AnyDesk Windows Registry configuration...');
   await execPromise('reg delete "HKCU\\Software\\AnyDesk" /f 2>nul');
 
-  // Step 6: Restart Service (so it creates a brand new ID)
-  sendLog('info', '[Step 6/6] Re-initializing service...');
+  // Step 6: Restart Service
+  sendLog('info', '[Step 6/6] Re-initializing service to generate fresh ID...');
   const serviceStatus = await getAnyDeskServiceStatus();
   if (serviceStatus !== 'NotInstalled') {
     await startAnyDeskService();
-    // Allow service 2 seconds to generate fresh ID
     await new Promise((r) => setTimeout(r, 2000));
   }
 
@@ -627,7 +617,7 @@ async function performFactoryReset() {
   sendLog('info', '=======================================================');
   sendLog(
     'success',
-    `🎉 FACTORY RESET COMPLETE! AnyDesk is now like newly installed.${newId ? ' New Assigned ID: ' + newId : ''}`
+    `FACTORY RESET COMPLETE! AnyDesk is like newly installed.${newId ? ' New Assigned ID: ' + newId : ''}`
   );
   sendLog('info', '=======================================================');
 
@@ -671,7 +661,6 @@ async function listBackups() {
     } catch (e) {}
   }
 
-  // Sort descending by created date
   backups.sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
   return backups;
 }
@@ -731,7 +720,180 @@ function relaunchAsAdmin() {
   });
 }
 
-// Electron IPC Handlers
+// ==========================================
+// GITHUB AUTO-UPDATE SYSTEM
+// ==========================================
+
+function parseVersion(vStr) {
+  const clean = vStr.replace(/^v/i, '').trim();
+  const parts = clean.split('.').map(Number);
+  return {
+    major: parts[0] || 0,
+    minor: parts[1] || 0,
+    patch: parts[2] || 0,
+    raw: clean
+  };
+}
+
+function isNewerVersion(current, remote) {
+  const c = parseVersion(current);
+  const r = parseVersion(remote);
+  if (r.major > c.major) return true;
+  if (r.major === c.major && r.minor > c.minor) return true;
+  if (r.major === c.major && r.minor === c.minor && r.patch > c.patch) return true;
+  return false;
+}
+
+async function checkForUpdates() {
+  sendLog('info', 'Checking GitHub for new Any Reset releases...');
+  try {
+    const url = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'AnyReset-Desktop-App',
+        Accept: 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return { success: true, hasUpdate: false, message: 'No releases found on GitHub.' };
+      }
+      throw new Error(`GitHub API returned status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const latestVersion = data.tag_name || '1.0.0';
+    const currentVersion = app.getVersion();
+
+    const hasUpdate = isNewerVersion(currentVersion, latestVersion);
+
+    // Find the executable asset
+    const exeAsset = (data.assets || []).find(
+      (a) => a.name.endsWith('.exe') || a.name.includes('Portable')
+    );
+
+    sendLog(
+      'info',
+      `Current version: v${currentVersion} | Latest GitHub version: ${latestVersion} | Update available: ${hasUpdate}`
+    );
+
+    return {
+      success: true,
+      hasUpdate,
+      currentVersion: `v${currentVersion}`,
+      latestVersion,
+      releaseName: data.name || latestVersion,
+      releaseNotes: data.body || 'No release notes provided.',
+      publishedAt: data.published_at,
+      htmlUrl: data.html_url,
+      asset: exeAsset
+        ? {
+            name: exeAsset.name,
+            size: exeAsset.size,
+            downloadUrl: exeAsset.browser_download_url
+          }
+        : null
+    };
+  } catch (err) {
+    sendLog('error', `Update check failed: ${err.message}`);
+    return { success: false, error: err.message };
+  }
+}
+
+function downloadFileWithRedirects(url, destPath, onProgress) {
+  return new Promise((resolve, reject) => {
+    function get(currentUrl) {
+      const client = currentUrl.startsWith('https') ? https : http;
+      client
+        .get(
+          currentUrl,
+          {
+            headers: {
+              'User-Agent': 'AnyReset-Desktop-App'
+            }
+          },
+          (res) => {
+            // Handle redirects (e.g. 301, 302 to AWS S3)
+            if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+              return get(res.headers.location);
+            }
+
+            if (res.statusCode !== 200) {
+              return reject(new Error(`Download failed with HTTP code ${res.statusCode}`));
+            }
+
+            const totalBytes = parseInt(res.headers['content-length'] || '0', 10);
+            let receivedBytes = 0;
+
+            const fileStream = fs.createWriteStream(destPath);
+            res.on('data', (chunk) => {
+              receivedBytes += chunk.length;
+              if (onProgress && totalBytes > 0) {
+                const percent = Math.min(100, Math.round((receivedBytes / totalBytes) * 100));
+                onProgress({ percent, receivedBytes, totalBytes });
+              }
+            });
+
+            res.pipe(fileStream);
+
+            fileStream.on('finish', () => {
+              fileStream.close(() => resolve(destPath));
+            });
+
+            fileStream.on('error', (err) => {
+              fs.unlink(destPath, () => {});
+              reject(err);
+            });
+          }
+        )
+        .on('error', (err) => {
+          fs.unlink(destPath, () => {});
+          reject(err);
+        });
+    }
+
+    get(url);
+  });
+}
+
+async function downloadUpdate(assetUrl, fileName) {
+  try {
+    const downloadsDir = app.getPath('downloads');
+    const safeName = fileName || 'Any.Reset-Update.exe';
+    const targetPath = path.join(downloadsDir, safeName);
+
+    sendLog('info', `Downloading update from GitHub to: ${targetPath}...`);
+
+    await downloadFileWithRedirects(assetUrl, targetPath, (progress) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('update-download-progress', progress);
+      }
+    });
+
+    sendLog('success', `Update downloaded successfully to: ${targetPath}`);
+    return { success: true, filePath: targetPath };
+  } catch (err) {
+    sendLog('error', `Download error: ${err.message}`);
+    return { success: false, error: err.message };
+  }
+}
+
+function runDownloadedUpdate(filePath) {
+  try {
+    if (fs.existsSync(filePath)) {
+      sendLog('info', `Launching updated binary: ${filePath}`);
+      spawn(filePath, [], { detached: true, stdio: 'ignore' });
+      app.quit();
+      return { success: true };
+    }
+    return { success: false, error: 'File does not exist.' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// IPC Handlers
 ipcMain.handle('get-status', async () => getStatus());
 ipcMain.handle('scan-all', async () => scanAllItems());
 ipcMain.handle('clean-items', async (_e, { itemIds, shouldBackup }) => cleanSpecificItems(itemIds, shouldBackup));
@@ -797,6 +959,11 @@ ipcMain.handle('list-backups', async () => listBackups());
 ipcMain.handle('restore-backup', async (_e, folderName) => restoreBackup(folderName));
 ipcMain.handle('delete-backup', async (_e, folderName) => deleteBackup(folderName));
 
+// Update IPC Handlers
+ipcMain.handle('check-for-updates', async () => checkForUpdates());
+ipcMain.handle('download-update', async (_e, { assetUrl, fileName }) => downloadUpdate(assetUrl, fileName));
+ipcMain.handle('run-downloaded-update', async (_e, filePath) => runDownloadedUpdate(filePath));
+
 // Window Management
 ipcMain.handle('window-minimize', () => mainWindow && mainWindow.minimize());
 ipcMain.handle('window-maximize', () => {
@@ -811,12 +978,12 @@ ipcMain.handle('window-close', () => mainWindow && mainWindow.close());
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1040,
-    height: 760,
-    minWidth: 880,
-    minHeight: 640,
+    width: 1060,
+    height: 770,
+    minWidth: 900,
+    minHeight: 650,
     frame: false,
-    backgroundColor: '#09090b',
+    backgroundColor: '#ffffff',
     title: 'Any Reset',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

@@ -23,6 +23,16 @@ contextBridge.exposeInMainWorld('api', {
   restoreBackup: (folderName) => ipcRenderer.invoke('restore-backup', folderName),
   deleteBackup: (folderName) => ipcRenderer.invoke('delete-backup', folderName),
 
+  // Auto-Update Features
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  downloadUpdate: (assetUrl, fileName) => ipcRenderer.invoke('download-update', { assetUrl, fileName }),
+  runDownloadedUpdate: (filePath) => ipcRenderer.invoke('run-downloaded-update', filePath),
+  onUpdateProgress: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on('update-download-progress', handler);
+    return () => ipcRenderer.removeListener('update-download-progress', handler);
+  },
+
   // Window Controls
   minimizeWindow: () => ipcRenderer.invoke('window-minimize'),
   maximizeWindow: () => ipcRenderer.invoke('window-maximize'),
